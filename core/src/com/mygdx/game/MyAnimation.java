@@ -3,12 +3,16 @@ package com.mygdx.game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class MyAnimation {
 
+  private TextureAtlas atlas;
   private Texture image;
-  private Animation<TextureRegion> animation;
+  private Animation<TextureRegion> textureRegionAnimation;
+  private Animation<AtlasRegion> atlasRegionAnimation;
   private float time;
 
   public MyAnimation(String imageName, int columns, int rows, PlayMode playMode) {
@@ -27,12 +31,18 @@ public class MyAnimation {
       }
     }
 
-    animation = new Animation<>(1 / 7f, resultRegions);
-    animation.setPlayMode(playMode);
+    textureRegionAnimation = new Animation<>(1 / 7f, resultRegions);
+    textureRegionAnimation.setPlayMode(playMode);
+  }
+
+  public MyAnimation(String atlasName, PlayMode playMode, String regionName) {
+    this.atlas = new TextureAtlas(atlasName);
+    atlasRegionAnimation = new Animation<>(1 / 7f, this.atlas.findRegions(regionName));
+    atlasRegionAnimation.setPlayMode(playMode);
   }
 
   public TextureRegion getFrame() {
-    return animation.getKeyFrame(time);
+    return textureRegionAnimation.getKeyFrame(time);
   }
 
   public void setTime(float time) {
@@ -40,11 +50,11 @@ public class MyAnimation {
   }
 
   public void setPlayMode(PlayMode playMode) {
-    animation.setPlayMode(playMode);
+    textureRegionAnimation.setPlayMode(playMode);
   }
 
   public boolean isAnimationOver() {
-    return animation.isAnimationFinished(time);
+    return textureRegionAnimation.isAnimationFinished(time);
   }
 
   public void zeroTime() {
@@ -53,6 +63,7 @@ public class MyAnimation {
 
   public void dispose() {
     image.dispose();
+    atlas.dispose();
   }
 
 }
